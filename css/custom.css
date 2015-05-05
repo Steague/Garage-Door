@@ -2,3 +2,18 @@
 	jQuery Mobile Boilerplate
 	css/custom.css
 */
+
+.LOW
+{
+	color: #FFF;
+}
+
+button {
+	font-size: 14pt;
+	font-weight: bold;
+	color: white;
+	border: black 3px solid;
+	width: auto;
+	height: auto;
+	padding: 0 0 0 0;
+}

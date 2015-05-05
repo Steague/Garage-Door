@@ -112,14 +112,11 @@ function WebIOPi() {
 //	}
 
 	var head = document.getElementsByTagName('head')[0];
-console.log("loading jquery");
 	var jquery = document.createElement('script');
 	jquery.type = 'text/javascript';
 	jquery.src = 'js/jquery-1.10.2.js';
-	//	if (!isMobile()) {
 	jquery.onload = function() {
 		w().init();
-console.log("loading mobile init");
 		var jquery = document.createElement('script');
 		jquery.type = 'text/javascript';
 		jquery.src = 'js/mobileinit.js';
@@ -137,21 +134,7 @@ console.log("loading mobile init");
 		application.src = 'js/application.js';
 		head.appendChild(application);
 	};
-	//	}
 	head.appendChild(jquery);
-
-/*
-	if (isMobile()) {
-		console.log("load jquery mobile");
-		var mobile = document.createElement('script');
-		mobile.type = 'text/javascript';
-		mobile.src = '/jquery-mobile.js';
-		mobile.onload = function() {
-			w().initMobile()
-		};
-		head.appendChild(mobile);
-	}
-*/
 
 	// GA
 	// _gaq.push(['_setAccount', 'UA-33979593-2']);
@@ -169,16 +152,12 @@ console.log("loading mobile init");
 	style.href = '/webiopi.css';
 	head.appendChild(style);
 
-/*
-	if (isMobile()) {
-		var style = document.createElement('link');
-		style.rel = "stylesheet";
-		style.type = 'text/css';
-		style.href = '/jquery-mobile.css';
-		head.appendChild(style);
-	}
-*/
-	
+	var style2 = document.createElement('link');
+	style2.rel = "stylesheet";
+	style2.type = 'text/css';
+	style2.href = 'css/custom.css';
+	head.appendChild(style2);
+
 	// init ALTs
 	this.addALT(this.ALT.I2C, 0, "SDA");
 	this.addALT(this.ALT.I2C, 1, "SCL");
@@ -231,12 +210,6 @@ WebIOPi.prototype.init = function() {
 	});
 }
 
-/*
-WebIOPi.prototype.initMobile = function() {
-	webiopi().init();
-}
-*/
-
 WebIOPi.prototype.ready = function (cb) {
 	w().readyCallback = cb;
 }
@@ -260,8 +233,9 @@ WebIOPi.prototype.addALT = function (alt, gpio, name) {
 
 WebIOPi.prototype.updateValue = function (gpio, value) {
 	w().GPIO[gpio].value = value;
-	var style = (value == 1) ? "HIGH" : "LOW";
-	$("#gpio"+gpio).attr("class", style);
+	$("#gpio"+gpio).addClass((value == 1) ? "HIGH" : "LOW");
+	$("#gpio"+gpio).removeClass((value != 1) ? "HIGH" : "LOW");
+	$(checkStatus);
 }
 
 WebIOPi.prototype.updateFunction = function (gpio, func) {
@@ -322,24 +296,7 @@ WebIOPi.prototype.checkVersion = function () {
 	var version;
 	
 	$.get(w().context + "version", function(data) {
-		_gaq.push(['_trackEvent', 'version', data]);
-//		version = data.split("/")[2];
-//
-//		$.get("http://webiopi.trouch.com/version.php", function(data) {
-//			var lines = data.split("\n");
-//			var c = version.split(".");
-//			var n = lines[0].split(".");
-//			var updated = false;
-//			for (i=0; i<Math.min(c.length, n.length); i++) {
-//				if (n[i]>c[i]) {
-//					updated = true;
-//				}
-//			}
-//			if (updated || (n.length > c.length)) {
-//				var div = $('<div id="update"><a href="' + lines[1] + '">Update available</a></div>');
-//				$("body").append(div);
-//			}
-//		});
+		//_gaq.push(['_trackEvent', 'version', data]);
 	});
 }
 
@@ -483,6 +440,14 @@ WebIOPi.prototype.createGPIOButton = function (gpio, label) {
 		w().toggleValue(gpio);
 	});
 	return button;
+}
+
+WebIOPi.prototype.createGPIOLabel = function (gpio, label) {
+	var myLabel = $('<h4 class="ui-bar ui-bar-a ui-corner-all">');
+	myLabel.attr("id", "gpio" + gpio);
+	myLabel.text(label);
+	
+	return myLabel;
 }
 
 WebIOPi.prototype.createFunctionButton = function (gpio) {
@@ -795,23 +760,21 @@ GPIOPort.prototype.refreshUI = function() {
 		for (var i = this.channelCount-1; i>=0; i--) {
 			var cell = $("<td>");
 			var button = webiopi().createButton(this.name + "_" + i + "_value", i, function() {
-				if ($("#" + port.name + "_" + $(this).attr("channel") + "_value").attr("class") == "LOW") {
+				if ($("#" + port.name + "_" + $(this).attr("channel") + "_value").hasClass("LOW")) {
 					value = 1;
 				}
 				else {
 					value = 0;
 				}
 				port.digitalWrite($(this).attr("channel"), value, function(name, channel, data) {
-					if (data == "1") {
-						$("#" + name + "_" + channel + "_value").attr("class", "HIGH")
-					}
-					else {
-						$("#" + name + "_" + channel + "_value").attr("class", "LOW")
-					}
+					$("#" + name + "_" + channel + "_value").addClass((data == "1") ? "HIGH" : "LOW");
+					$("#" + name + "_" + channel + "_value").removeClass((data != "1") ? "HIGH" : "LOW");
+					$(checkStatus);
 				});
 			});
 			button.attr("channel", i);
-			button.attr("class", "LOW");
+			$(button).addClass("LOW");
+			$(checkStatus);
 			cell.append(button);
 			line.append(cell);
 		}
@@ -843,7 +806,9 @@ GPIOPort.prototype.refreshUI = function() {
 	
 	this.readAll(function(name, data) {
 		for (i in data) {
-			$("#" + name + "_" + i + "_value").attr("class", data[i]["value"] == "1" ? "HIGH" : "LOW");
+			$("#" + name + "_" + i + "_value").addClass(data[i]["value"] == "1" ? "HIGH" : "LOW");
+			$("#" + name + "_" + i + "_value").removeClass(data[i]["value"] != "1" ? "HIGH" : "LOW");
+			$(checkStatus);
 			$("#" + name + "_" + i + "_func").text(data[i]["function"]);
 		}
 		setTimeout(function(){port.refreshUI()}, port.refreshTime);
@@ -1447,7 +1412,7 @@ PiFaceDigital.prototype.refreshUI = function() {
 		for (var i = 7; i>=0; i--) {
 			var cell = $("<td>");
 			var button = webiopi().createButton(this.name + "_output_" + i, i, function() {
-				if ($("#" + port.name + "_output_" + $(this).attr("channel")).attr("class") == "LOW") {
+				if ($("#" + port.name + "_output_" + $(this).attr("channel")).hasClass("LOW")) {
 					value = 1;
 				}
 				else {
@@ -1456,15 +1421,18 @@ PiFaceDigital.prototype.refreshUI = function() {
 				port.output($(this).attr("channel"), value, function(name, channel, data) {
 					var button = $("#" + name + "_output_" + channel);
 					if (data == "1") {
-						button.attr("class", "HIGH")
+						$(button).addClass("HIGH");
+						$(checkStatus);
 					}
 					else {
-						button.attr("class", "LOW")
+						$(button).addClass("LOW");
+						$(checkStatus);
 					}
 				});
 			});
 			button.attr("channel", i);
-			button.attr("class", "LOW");
+			$(button).addClass("LOW");
+			$(checkStatus);
 			cell.append(button);
 			line.append(cell);
 		}
@@ -1477,7 +1445,8 @@ PiFaceDigital.prototype.refreshUI = function() {
 			var button = webiopi().createButton(this.name + "_input_" + i, i, function() {
 			});
 			button.attr("channel", i);
-			button.attr("class", "LOW");
+			$(button).addClass("LOW");
+			$(checkStatus);
 			cell.append(button);
 			line.append(cell);
 		}
@@ -1487,10 +1456,14 @@ PiFaceDigital.prototype.refreshUI = function() {
 	
 	this.readAll(function(name, data) {
 		for (i in data["input"]) {
-			$("#" + name + "_input_" + i).attr("class", data["input"][i] == "1" ? "HIGH" : "LOW");
+			$("#" + name + "_input_" + i).addClass(data["input"][i] == "1" ? "HIGH" : "LOW");
+			$("#" + name + "_input_" + i).removeClass(data["input"][i] != "1" ? "HIGH" : "LOW");
+			$(checkStatus);
 		}
 		for (i in data["output"]) {
-			$("#" + name + "_output_" + i).attr("class", data["output"][i] == "1" ? "HIGH" : "LOW");
+			$("#" + name + "_output_" + i).addClass(data["output"][i] == "1" ? "HIGH" : "LOW");
+			$("#" + name + "_output_" + i).removeClass(data["output"][i] != "1" ? "HIGH" : "LOW");
+			$(checkStatus);
 		}
 		setTimeout(function(){port.refreshUI()}, port.refreshTime);
 	});
