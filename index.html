@@ -31,32 +31,34 @@
 
 	<!-- Javascript includes -->
 	<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="/webiopi.js"></script>
 	<script type="text/javascript" src="js/mobileinit.js"></script>
 	<script type="text/javascript" src="js/ios-orientationchange-fix.min.js"></script>
 	<script type="text/javascript" src="js/jquery.mobile-1.4.0.js"></script>
 	<script type="text/javascript" src="js/application.js"></script>
-	<script type="text/javascript" src="/webiopi.js"></script>
 	<!-- Startup Images for iDevices -->
 	<script>(function(){var a;if(navigator.platform==="iPad"){a=window.orientation!==90||window.orientation===-90?"images/startup-tablet-landscape.png":"images/startup-tablet-portrait.png"}else{a=window.devicePixelRatio===2?"images/startup-retina.png":"images/startup.png"}document.write('<link rel="apple-touch-startup-image" href="'+a+'"/>')})()</script>
 	<!-- The script prevents links from opening in mobile safari. https://gist.github.com/1042026 -->
 	<script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
 	<script type="text/javascript">
-        webiopi().ready(function() {
-                var content, content2, button;
-                content = $("#content");
+		$(document).ready(function() {
+	        //webiopi().ready(function() {
+	        	console.log("foo");
+				var content, content2, button;
+				content = $("#content");
 				content2 = $("#openCloseButton");
 				$(checkStatus);
-		webiopi().setFunction(7,"in");
-		webiopi().setFunction(18,"in");
-		
-		
-                // create an "OPEN" labeled button for GPIO 18
-                button = webiopi().createGPIOButton(18, "");
-                content2.append(button); // append button to content div
+				webiopi().setFunction(7,"in");
+				webiopi().setFunction(18,"in");
+			
+			
+	            // create an "OPEN" labeled button for GPIO 18
+	            button = webiopi().createGPIOButton(18, "");
+	            content2.append(button); // append button to content div
 
-                // create button that calls the mousedown function below
-                button = webiopi().createButton("button", "GARAGE DOOR", showConfirm );
-                content.append(button); // append button to content div
+	            // create button that calls the mousedown function below
+	            button = webiopi().createButton("button", "GARAGE DOOR", showConfirm );
+	            content.append(button); // append button to content div
 				
 				function checkStatus() {
 				if ($('#gpio18').hasClass('LOW')){
@@ -104,11 +106,12 @@
 					document.getElementById('button').style.background = "#808080 url('/doge-static.png') no-repeat center bottom";
 				}
 
-            // constantly refresh status to see if door is open or closed
-				webiopi().refreshGPIO(true)
-				});
+	        // constantly refresh status to see if door is open or closed
+				//webiopi().refreshGPIO(true)
+			//});
+		});
 
-        </script>
+    </script>
 </head>
 <body>
 	<div data-role="page">
@@ -129,8 +132,9 @@
 				<li><a href="lists.html">List Views</a></li>
 			</ul> -->
 
-			<div id="header"><h2>Door Status</h2></div>
+			<h3 class="ui-bar ui-bar-a ui-corner-all">Door Status</h3>
 			<div id="openCloseButton" style="margin-left: auto; margin-right: auto; position:relative"></div>
+			<!-- <div id="openCloseButton" href="#" data-iconpos="top" data-icon="home" class="ui-link ui-btn ui-icon-home ui-btn-icon-top ui-shadow ui-corner-all" role="button">Garage Door</div> -->
 			<div id="content" style="margin-left: auto; margin-right: auto; position:relative"></div>
 			<div id="confirmText"><h2>Are you sure?</h2></div>
 			<div id="confirmBox"><div id="yes" class="confirmButton">YES</div><div id="no" class="confirmButton">NO</div></div>
