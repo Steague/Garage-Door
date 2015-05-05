@@ -30,19 +30,20 @@
 	<link rel="stylesheet" href="css/custom.css" />
 
 	<!-- Javascript includes -->
-	<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+	<!--<script type="text/javascript" src="js/jquery-1.10.2.js"></script>-->
+	<!--<script type="text/javascript" src="/webiopi.js"></script>-->
+	<!--<script type="text/javascript" src="js/mobileinit.js"></script>-->
+	<!--<script type="text/javascript" src="js/ios-orientationchange-fix.min.js"></script>-->
+	<!--<script type="text/javascript" src="js/jquery.mobile-1.4.0.js"></script>-->
+	<!--<script type="text/javascript" src="js/application.js"></script>-->
 	<script type="text/javascript" src="/webiopi.js"></script>
-	<script type="text/javascript" src="js/mobileinit.js"></script>
-	<script type="text/javascript" src="js/ios-orientationchange-fix.min.js"></script>
-	<script type="text/javascript" src="js/jquery.mobile-1.4.0.js"></script>
-	<script type="text/javascript" src="js/application.js"></script>
 	<!-- Startup Images for iDevices -->
 	<script>(function(){var a;if(navigator.platform==="iPad"){a=window.orientation!==90||window.orientation===-90?"images/startup-tablet-landscape.png":"images/startup-tablet-portrait.png"}else{a=window.devicePixelRatio===2?"images/startup-retina.png":"images/startup.png"}document.write('<link rel="apple-touch-startup-image" href="'+a+'"/>')})()</script>
 	<!-- The script prevents links from opening in mobile safari. https://gist.github.com/1042026 -->
 	<script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
 	<script type="text/javascript">
-		$(document).ready(function() {
-	        //webiopi().ready(function() {
+console.log("Waiting for webiopi to init");
+	        webiopi().ready(function() {
 	        	console.log("foo");
 				var content, content2, button;
 				content = $("#content");
@@ -107,9 +108,8 @@
 				}
 
 	        // constantly refresh status to see if door is open or closed
-				//webiopi().refreshGPIO(true)
-			//});
-		});
+				webiopi().refreshGPIO(true)
+			});
 
     </script>
 </head>

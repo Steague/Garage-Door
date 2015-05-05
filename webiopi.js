@@ -100,28 +100,45 @@ function WebIOPi() {
 	}
 
 	// get context
-	var reg = new RegExp("http://" + window.location.host + "(.*)webiopi.js");
-	var scripts = document.getElementsByTagName("script");
-	for(var i = 0; i < scripts.length; i++) {
-		var res = reg.exec(scripts[i].src);
-		if (res && (res.length > 1)) {
-			script = scripts[i];
-			this.context = res[1];
-			
-		}
-	}
+//	var reg = new RegExp("http://" + window.location.host + "(.*)webiopi.js");
+//	var scripts = document.getElementsByTagName("script");
+//	for(var i = 0; i < scripts.length; i++) {
+//		var res = reg.exec(scripts[i].src);
+//		if (res && (res.length > 1)) {
+//			script = scripts[i];
+//			this.context = res[1];
+//			
+//		}
+//	}
 
 	var head = document.getElementsByTagName('head')[0];
-
-// 	var jquery = document.createElement('script');
-// 	jquery.type = 'text/javascript';
-// 	jquery.src = '/jquery.js';
-// //	if (!isMobile()) {
-// 		jquery.onload = function() {
-// 			w().init();
-// 		};
-// //	}
-// 	head.appendChild(jquery);
+console.log("loading jquery");
+	var jquery = document.createElement('script');
+	jquery.type = 'text/javascript';
+	jquery.src = 'js/jquery-1.10.2.js';
+	//	if (!isMobile()) {
+	jquery.onload = function() {
+		w().init();
+console.log("loading mobile init");
+		var jquery = document.createElement('script');
+		jquery.type = 'text/javascript';
+		jquery.src = 'js/mobileinit.js';
+		head.appendChild(jquery);
+		var iosfix = document.createElement('script');
+		iosfix.type = 'text/javascript';
+		iosfix.src = 'js/ios-orientationchange-fix.min.js';
+		head.appendChild(iosfix);
+		var jquerymobile = document.createElement('script');
+		jquerymobile.type = 'text/javascript';
+		jquerymobile.src = 'js/jquery.mobile-1.4.0.js';
+		head.appendChild(jquerymobile);
+		var application = document.createElement('script');
+		application.type = 'text/javascript';
+		application.src = 'js/application.js';
+		head.appendChild(application);
+	};
+	//	}
+	head.appendChild(jquery);
 
 /*
 	if (isMobile()) {
