@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-	<title> jQuery Mobile Boilerplate </title>
+	<title> Teague Garage </title>
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,26 +30,96 @@
 	<link rel="stylesheet" href="css/custom.css" />
 
 	<!-- Javascript includes -->
-	<script src="js/jquery-1.10.2.js"></script>
-	<script src="js/mobileinit.js"></script>
-	<script src="js/ios-orientationchange-fix.min.js"></script>
-	<script src="js/jquery.mobile-1.4.0.js"></script>
-	<script src="js/application.js"></script>
+	<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="js/mobileinit.js"></script>
+	<script type="text/javascript" src="js/ios-orientationchange-fix.min.js"></script>
+	<script type="text/javascript" src="js/jquery.mobile-1.4.0.js"></script>
+	<script type="text/javascript" src="js/application.js"></script>
+	<script type="text/javascript" src="/webiopi.js"></script>
 	<!-- Startup Images for iDevices -->
 	<script>(function(){var a;if(navigator.platform==="iPad"){a=window.orientation!==90||window.orientation===-90?"images/startup-tablet-landscape.png":"images/startup-tablet-portrait.png"}else{a=window.devicePixelRatio===2?"images/startup-retina.png":"images/startup.png"}document.write('<link rel="apple-touch-startup-image" href="'+a+'"/>')})()</script>
 	<!-- The script prevents links from opening in mobile safari. https://gist.github.com/1042026 -->
 	<script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
+	<script type="text/javascript">
+        webiopi().ready(function() {
+                var content, content2, button;
+                content = $("#content");
+				content2 = $("#openCloseButton");
+				$(checkStatus);
+		webiopi().setFunction(7,"in");
+		webiopi().setFunction(18,"in");
+		
+		
+                // create an "OPEN" labeled button for GPIO 18
+                button = webiopi().createGPIOButton(18, "");
+                content2.append(button); // append button to content div
+
+                // create button that calls the mousedown function below
+                button = webiopi().createButton("button", "GARAGE DOOR", showConfirm );
+                content.append(button); // append button to content div
+				
+				function checkStatus() {
+				if ($('#gpio18').hasClass('LOW')){
+					$("#gpio18").html('CLOSED');
+					}else {
+						$("#gpio18").html('OPEN');
+					}
+				setTimeout(checkStatus,1000)
+				}
+
+				// this function gets called by the mousedown function below - it sets gpio7 back to 'IN'
+				function mouseup() {
+					webiopi().setFunction(7,"in");
+					//window.alert("RELAY OPEN");
+				}
+
+				// this function sets gpio7 to 'OUT' which will trip the relay.  After .5 second it calls mouseup above.
+				// hides the confirmation div and makes doge face change
+				function mousedown() {
+					document.getElementById('button').style.background = "#808080 url('/doge-action.png') no-repeat center bottom";
+					webiopi().setFunction(7,"out");
+					//window.alert("RELAY CLOSED");
+					document.getElementById('confirmBox').style.visibility = "hidden";
+					document.getElementById('confirmText').style.visibility = "hidden";
+					setTimeout(mouseup, 500);
+					setTimeout(dogeNormal, 3000);
+				}
+
+				// after pressing no hide the confirmation div
+				function hideConfirm() {
+					document.getElementById('confirmBox').style.visibility = "hidden";
+					document.getElementById('confirmText').style.visibility = "hidden";
+				}
+
+				// show confirmation div after pressing garage door button
+				function showConfirm() {
+					document.getElementById('yes').onclick = mousedown;
+					document.getElementById('no').onclick = hideConfirm;
+					document.getElementById('confirmBox').style.visibility = "visible";
+					document.getElementById('confirmText').style.visibility = "visible";
+				}
+				
+				// change doge face to normal
+				function dogeNormal() {
+					document.getElementById('button').style.background = "#808080 url('/doge-static.png') no-repeat center bottom";
+				}
+
+            // constantly refresh status to see if door is open or closed
+				webiopi().refreshGPIO(true)
+				});
+
+        </script>
 </head>
 <body>
 	<div data-role="page">
 
 		<div data-role="header">
-			<h1>Garage Voodoo</h1>
+			<h1>Teague Garage</h1>
 		</div>
 
 		<div data-role="content">
 
-			<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">
+<!-- 			<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">
 				<li>Snippet Pages</li>
 				<li><a href="buttons.html">Buttons</a></li>
 				<li><a href="grids.html">Grids</a></li>
@@ -57,12 +127,18 @@
 				<li><a href="collapsible-sets.html">Collapsible Sets</a></li>
 				<li><a href="forms.html">Form Elements</a></li>
 				<li><a href="lists.html">List Views</a></li>
-			</ul>
+			</ul> -->
+
+			<div id="header"><h2>Door Status</h2></div>
+			<div id="openCloseButton" style="margin-left: auto; margin-right: auto; position:relative"></div>
+			<div id="content" style="margin-left: auto; margin-right: auto; position:relative"></div>
+			<div id="confirmText"><h2>Are you sure?</h2></div>
+			<div id="confirmBox"><div id="yes" class="confirmButton">YES</div><div id="no" class="confirmButton">NO</div></div>
 
 		</div>
 
 		<div data-role="footer">
-			<p>&copy; 2015 - Garage Voodoo</p>
+			<p>&copy; 2015 - Teague Garage</p>
 		</div>
 
 	</div>
