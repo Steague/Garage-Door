@@ -9,61 +9,26 @@ $(document).on("pageinit", function(event){
 
 });
 
-function checkStatus(to) {
-	if ($('#gpio18').hasClass('LOW')) {
-		$("#gpio18").html('CLOSED');
-	} else {
-		$("#gpio18").html('OPEN');
-	}
-	if (typeof to != "undefined")
-	{
-		setTimeout(checkStatus,1000)
-	}
-}
+$( "#latestPhoto" ).bind({
+    popupbeforeposition: function(event, ui) {
+        $( "#latestPhoto" ).html('<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img src="./webcam/latest.jpg?'+new Date().getTime()+'" alt="Latest">');
+        var maxHeight = $( window ).height() - 60 + "px";
+        $( ".photopopup img" ).css( "max-height", maxHeight );
+    },
+    popupafteropen: function(event, ui) {
+        $( "#latestPhoto" ).parent().css({"top":"25%","left":"10px"});
+    }
+});
 
-// this function gets called by the mousedown function below - it sets gpio7 back to 'IN'
-function mouseup() {
-	webiopi().setFunction(7,"in");
-	//window.alert("RELAY OPEN");
-}
 
-// this function sets gpio7 to 'OUT' which will trip the relay.  After .5 second it calls mouseup above.
-// hides the confirmation div and makes doge face change
-function mousedown() {
-	document.getElementById('button').style.background = "#808080 url('/doge-action.png') no-repeat center bottom";
-	webiopi().setFunction(7,"out");
-	//window.alert("RELAY CLOSED");
-	document.getElementById('confirmBox').style.visibility = "hidden";
-	document.getElementById('confirmText').style.visibility = "hidden";
-	setTimeout(mouseup, 500);
-	setTimeout(dogeNormal, 3000);
-}
-
-// after pressing no hide the confirmation div
-function hideConfirm() {
-	document.getElementById('confirmBox').style.visibility = "hidden";
-	document.getElementById('confirmText').style.visibility = "hidden";
-}
-
-// show confirmation div after pressing garage door button
-function showConfirm() {
-	confirmDialog("Are you sure you want to leave the game? This is an irreversible change. Once you confirm you will not be able to retrieve your character in the future.", function() {
-        // user has confirmed, do stuff
-        //console.log("user has confirmed, do stuff",$(e.target).attr("href"));
-        //console.log("wat",url);
-        //$.mobile.navigate(url);
-        alert("user clicked yes");
-    });
-	// document.getElementById('yes').onclick = mousedown;
-	// document.getElementById('no').onclick = hideConfirm;
-	// document.getElementById('confirmBox').style.visibility = "visible";
-	// document.getElementById('confirmText').style.visibility = "visible";
-}
-
-// change doge face to normal
-function dogeNormal() {
-	document.getElementById('button').style.background = "#808080 url('/doge-static.png') no-repeat center bottom";
-}
+$( "#lastOpenClose" ).bind({
+    popupbeforeposition: function(event, ui) {
+        $( "#lastOpenClose" ).html('<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img src="./webcam/lastaction.jpg?'+new Date().getTime()+'" alt="Last">');
+    },
+    popupafteropen: function(event, ui) {
+        $( "#lastOpenClose" ).parent().css({"top":"25%","left":"10px"});
+    }
+});
 
 function confirmDialog(text, callback) {
     var popupDialogId = 'popupDialog';

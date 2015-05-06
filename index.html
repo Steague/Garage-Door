@@ -64,7 +64,7 @@
 			}
 			if (typeof to != "undefined")
 			{
-				setTimeout(checkStatus,500)
+				setTimeout(checkStatus,1000)
 			}
 		}
 
@@ -76,6 +76,9 @@
 	            setTimeout(function() {
 	            	webiopi().setFunction(7,"in")
 	            }, 500);
+	            setTimeout(function() {
+	            	webiopi().callMacro("snapLastAction");
+	            }, 13000);
 	        });
 		}
 
@@ -93,6 +96,20 @@
 			<h3 class="ui-bar ui-bar-a ui-corner-all">Door Status</h3>
 			<div id="openCloseButton"></div>
 			<div id="content"></div>
+
+			<center>
+				<a href="#latestPhoto" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">Latest Photo</a>
+
+				<a href="#lastOpenClose" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline">Latest Open/Close</a>
+			</center>
+
+			<div data-role="popup" id="latestPhoto" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+			    <!-- <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img src="./webcam/latest.jpg" alt="Latest"> -->
+			</div>
+
+			<div data-role="popup" id="lastOpenClose" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+			    <!-- <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img src="./webcam/latest.jpg" alt="Latest"> -->
+			</div>
 
 		</div>
 
